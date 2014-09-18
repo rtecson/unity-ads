@@ -111,6 +111,12 @@ static UnityAdsCampaignManager *sharedUnityAdsInstanceCampaignManager = nil;
     if (self.campaigns == nil || [self.campaigns count] == 0) validData = NO;
     
     if (validData) {
+      [[UnityAdsProperties sharedInstance] setRefreshCampaignsAfterSeconds:
+       [jsonDictionary[kUnityAdsRefreshCampaignsAfterSeconds] unsignedIntegerValue]];
+      
+      [[UnityAdsProperties sharedInstance] setRefreshCampaignsAfterViewed:
+       [jsonDictionary[kUnityAdsRefreshCampaignsAfterViewed] unsignedIntegerValue]];
+      
       [[UnityAdsProperties sharedInstance] setWebViewBaseUrl:(NSString *)[jsonDictionary objectForKey:kUnityAdsWebViewUrlKey]];
       [[UnityAdsProperties sharedInstance] setAnalyticsBaseUrl:(NSString *)[jsonDictionary objectForKey:kUnityAdsAnalyticsUrlKey]];
       [[UnityAdsProperties sharedInstance] setAdsBaseUrl:(NSString *)[jsonDictionary objectForKey:kUnityAdsUrlKey]];
