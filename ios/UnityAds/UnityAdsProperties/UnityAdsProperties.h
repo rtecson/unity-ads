@@ -28,7 +28,8 @@
 @property (nonatomic, assign) BOOL sdkIsCurrent;
 @property (nonatomic, assign) BOOL statusBarWasVisible;
 @property (nonatomic, assign) NSUInteger refreshCampaignsAfterViewed;
-@property (nonatomic, assign) NSUInteger refreshCampaignsAfterSeconds;
+@property (nonatomic, assign) NSUInteger receivedCampaigns;
+@property (nonatomic, assign) NSTimeInterval refreshCampaignsAfterSeconds;
 
 + (UnityAdsProperties *)sharedInstance;
 - (void)refreshCampaignQueryString;

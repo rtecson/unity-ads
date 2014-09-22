@@ -18,6 +18,7 @@
 @interface UnityAdsCampaignManager () <NSURLConnectionDelegate>
 @property (nonatomic, strong) NSURLConnection *urlConnection;
 @property (nonatomic, strong) NSMutableData *campaignDownloadData;
+@property (nonatomic, strong) NSTimer * refreshCampaignsTimer;
 @end
 
 @implementation UnityAdsCampaignManager
@@ -67,6 +68,10 @@ static UnityAdsCampaignManager *sharedUnityAdsInstanceCampaignManager = nil;
 	return campaigns;
 }
 
+- (void)refreshAds:(id)sender {
+  [[UnityAds sharedInstance] refreshAds];
+}
+
 - (void)_processCampaignDownloadData {
   
   if (self.campaignDownloadData == nil) {
@@ -111,11 +116,20 @@ static UnityAdsCampaignManager *sharedUnityAdsInstanceCampaignManager = nil;
     if (self.campaigns == nil || [self.campaigns count] == 0) validData = NO;
     
     if (validData) {
+      [[UnityAdsProperties sharedInstance] setReceivedCampaigns:self.campaigns.count];
       [[UnityAdsProperties sharedInstance] setRefreshCampaignsAfterSeconds:
-       [jsonDictionary[kUnityAdsRefreshCampaignsAfterSeconds] unsignedIntegerValue]];
+       [jsonDictionary[kUnityAdsRefreshCampaignsAfterSeconds] doubleValue]];
       
       [[UnityAdsProperties sharedInstance] setRefreshCampaignsAfterViewed:
        [jsonDictionary[kUnityAdsRefreshCampaignsAfterViewed] unsignedIntegerValue]];
+      
+      self.refreshCampaignsTimer = nil;
+      self.refreshCampaignsTimer =
+      [NSTimer scheduledTimerWithTimeInterval:[[UnityAdsProperties sharedInstance] refreshCampaignsAfterSeconds]
+                                       target:self
+                                     selector:@selector(refreshAds:)
+                                     userInfo:nil
+                                      repeats:YES];
       
       [[UnityAdsProperties sharedInstance] setWebViewBaseUrl:(NSString *)[jsonDictionary objectForKey:kUnityAdsWebViewUrlKey]];
       [[UnityAdsProperties sharedInstance] setAnalyticsBaseUrl:(NSString *)[jsonDictionary objectForKey:kUnityAdsAnalyticsUrlKey]];

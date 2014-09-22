@@ -153,7 +153,6 @@ static UnityAds *sharedUnityAdsInstance = nil;
   if(network && [network length] > 0 && ![[[UnityAdsProperties sharedInstance] network] isEqualToString:network]) {
     UALOG_DEBUG(@"Setting network to %@", network);
     [[UnityAdsProperties sharedInstance] setNetwork:network];
-    // TODO: refresh ad plan
   }
 }
 
@@ -314,18 +313,12 @@ static UnityAds *sharedUnityAdsInstance = nil;
   }
 }
 
-- (void)refreshCampaignsOnTimer {
-  
-}
-
 - (BOOL)adsCanBeShown {
   if ([[UnityAdsCampaignManager sharedInstance] campaigns] != nil && [[[UnityAdsCampaignManager sharedInstance] campaigns] count] > 0 && self.initializer != nil && [self.initializer initWasSuccessfull]) {
 		return true;
   }
   return false;
 }
-
-#pragma mark - Private data refreshing
 
 - (void)refreshAds {
   if ([[UnityAdsMainViewController sharedInstance] mainControllerVisible]) {
@@ -357,9 +350,18 @@ static UnityAds *sharedUnityAdsInstance = nil;
 - (void)mainControllerDidClose {
 	UAAssert([NSThread isMainThread]);
 	UALOG_DEBUG(@"");
-  
   if (self.delegate != nil && [self.delegate respondsToSelector:@selector(unityAdsDidHide)])
 		[self.delegate unityAdsDidHide];
+  
+  if ([UnityAdsProperties sharedInstance].refreshCampaignsAfterViewed > 0)
+  [UnityAdsProperties sharedInstance].refreshCampaignsAfterViewed--;
+  
+  if ([UnityAdsProperties sharedInstance].receivedCampaigns > 0)
+    [UnityAdsProperties sharedInstance].receivedCampaigns--;
+  
+  if (![UnityAdsProperties sharedInstance].refreshCampaignsAfterViewed ||
+      ![UnityAdsProperties sharedInstance].receivedCampaigns)
+    [self refreshAds];
 }
 
 - (void)mainControllerWillOpen {
