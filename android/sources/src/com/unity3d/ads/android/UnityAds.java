@@ -173,16 +173,16 @@ public class UnityAds implements IUnityAdsCacheListener,
 		
 		return false;
 	}
+	
+	public static void setNetworks(String networks) {
+		UnityAdsProperties.NETWORKS = networks;
+	}
 
 	public static void setNetwork(String network) {
 		UnityAdsDeviceLog.entered();
 		UnityAdsDeviceLog.debug(network);
-		if(network != null && network.length() > 0 && UnityAdsProperties.NETWORK != network) {
-			UnityAdsProperties.NETWORK = network;
-
-			if(_initialized) {
-				refreshCampaigns(true);
-			}
+		if(network != null && network.length() > 0 && !UnityAdsProperties.CURRENT_NETWORK.equals(network)) {
+			UnityAdsProperties.CURRENT_NETWORK = network;
 		}
 	}
 	
@@ -218,7 +218,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 				currentZone.mergeOptions(options);
 				
 				if (currentZone.noOfferScreen()) {
-					ArrayList<UnityAdsCampaign> viewableCampaigns = webdata.getViewableVideoPlanCampaigns();
+					ArrayList<UnityAdsCampaign> viewableCampaigns = webdata.getViewableVideoPlanCampaigns(UnityAdsProperties.CURRENT_NETWORK);
 
 					if (viewableCampaigns.size() > 0) {
 						UnityAdsCampaign selectedCampaign = viewableCampaigns.get(0);
@@ -251,10 +251,10 @@ public class UnityAds implements IUnityAdsCacheListener,
 		return show(null);
 	}
 	
-	public static boolean canShowAds () {
+	public static boolean canShowAds (String network) {
 			return webdata != null && 
-			webdata.getViewableVideoPlanCampaigns() != null && 
-			webdata.getViewableVideoPlanCampaigns().size() > 0;
+			webdata.getViewableVideoPlanCampaigns(network) != null && 
+			webdata.getViewableVideoPlanCampaigns(network).size() > 0;
 	}
 
 	public static boolean canShow () {
@@ -407,7 +407,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 				
 		UnityAdsDeviceLog.debug(campaignHandler.getCampaign().toString());
 
-		if (canShowAds())
+		if (canShow())
 			sendReadyEvent();
 	}
 	
@@ -535,7 +535,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 		UnityAdsDeviceLog.entered();
 		Boolean dataOk = true;
 		
-		if (canShowAds()) {
+		if (canShow()) {
 			JSONObject setViewData = new JSONObject();
 			
 			try {				
@@ -933,7 +933,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 		}
 
 		if (webdata != null && webdata.getVideoPlanCampaigns() != null) {
-			if(webdata.getViewableVideoPlanCampaigns().size() == 0) {
+			if(webdata.getViewableVideoPlanCampaigns(UnityAdsProperties.CURRENT_NETWORK).size() == 0) {
 				UnityAdsDeviceLog.debug("All available videos watched, refreshing ad plan from server");
 				if(webdata != null) {
 					webdata.initCampaigns();

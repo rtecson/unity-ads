@@ -9,6 +9,7 @@ import com.unity3d.ads.android.UnityAds;
 import com.unity3d.ads.android.UnityAdsDeviceLog;
 import com.unity3d.ads.android.IUnityAdsListener;
 import com.unity3d.ads.android.UnityAdsUtils;
+import com.unity3d.ads.android.properties.UnityAdsProperties;
 
 public class UnityAdsUnityWrapper implements IUnityAdsListener {
 	private Activity _startupActivity = null;
@@ -78,7 +79,7 @@ public class UnityAdsUnityWrapper implements IUnityAdsListener {
 	}
 	
 	public boolean show (final String zoneId, final String rewardItemKey, final String optionsString) {
-		if (UnityAds.canShowAds() && UnityAds.canShow()) {
+		if (UnityAds.canShowAds(UnityAdsProperties.CURRENT_NETWORK) && UnityAds.canShow()) {
 			HashMap<String, Object> options = null;
 			
 			if(optionsString.length() > 0) {
@@ -105,12 +106,16 @@ public class UnityAdsUnityWrapper implements IUnityAdsListener {
 		UnityAds.hide();
 	}
 	
-	public boolean canShowAds () {
-		return UnityAds.canShowAds();
+	public boolean canShowAds (String network) {
+		return UnityAds.canShowAds(network);
 	}
 	
 	public boolean canShow () {
 		return UnityAds.canShow();
+	}
+	
+	public void setNetworks(String networks) {
+		UnityAds.setNetworks(networks);
 	}
 	
 	public void setNetwork(String network) {

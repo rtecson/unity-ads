@@ -106,7 +106,7 @@ public class ApplifierImpact implements IUnityAdsListener {
 	}
 	
 	public boolean canShowCampaigns () {
-		return UnityAds.canShowAds();
+		return UnityAds.canShowAds("android");
 	}
 	
 	public boolean canShowImpact () {

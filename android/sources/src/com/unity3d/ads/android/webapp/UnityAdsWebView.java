@@ -173,7 +173,7 @@ public class UnityAdsWebView extends WebView {
 				// Basic data
 				initData.put(UnityAdsConstants.UNITY_ADS_WEBVIEW_DATAPARAM_CAMPAIGNDATA_KEY, data);
 				initData.put(UnityAdsConstants.UNITY_ADS_WEBVIEW_DATAPARAM_PLATFORM_KEY, "android");
-				initData.put(UnityAdsConstants.UNITY_ADS_WEBVIEW_DATAPARAM_NETWORK_KEY, UnityAdsProperties.NETWORK);
+				initData.put(UnityAdsConstants.UNITY_ADS_WEBVIEW_DATAPARAM_NETWORK_KEY, UnityAdsProperties.CURRENT_NETWORK);
 
 				String advertisingId = UnityAdsDevice.getAdvertisingTrackingId();
 				if(advertisingId != null) {

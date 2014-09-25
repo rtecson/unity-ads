@@ -18,7 +18,10 @@ public class UnityAdsProperties {
 	public static String ANALYTICS_BASE_URL = null;
 	public static String UNITY_ADS_BASE_URL = null;
 	public static String CAMPAIGN_QUERY_STRING = null;
-	public static String NETWORK = "android";
+	
+	public static String NETWORKS = "android";
+	public static String CURRENT_NETWORK = "android";
+	
 	public static String UNITY_ADS_GAME_ID = null;
 	public static String UNITY_ADS_GAMER_ID = null;
 	public static Boolean TESTMODE_ENABLED = false;
@@ -52,7 +55,7 @@ public class UnityAdsProperties {
 		//Mandatory params
 		try {
 			queryString = String.format("%s%s=%s", queryString, UnityAdsConstants.UNITY_ADS_INIT_QUERYPARAM_PLATFORM_KEY, "android");
-			queryString = String.format("%s&%s=%s", queryString, UnityAdsConstants.UNITY_ADS_INIT_QUERYPARAM_NETWORK_KEY, NETWORK);
+			queryString = String.format("%s&%s=%s", queryString, UnityAdsConstants.UNITY_ADS_INIT_QUERYPARAM_NETWORK_KEY, NETWORKS);
 			queryString = String.format("%s&%s=%s", queryString, UnityAdsConstants.UNITY_ADS_INIT_QUERYPARAM_DEVICEID_KEY, URLEncoder.encode(UnityAdsDevice.getAndroidId(true), "UTF-8"));
 			
 			

@@ -76,6 +76,7 @@ public class UnityAdsConstants {
 
 	/* Campaign JSON Properties */
 	public static final String UNITY_ADS_CAMPAIGNS_KEY = "campaigns";
+	public static final String UNITY_ADS_CAMPAIGN_NETWORK_KEY = "network";
 	public static final String UNITY_ADS_CAMPAIGN_ENDSCREEN_KEY = "endScreen";
 	public static final String UNITY_ADS_CAMPAIGN_CLICKURL_KEY = "clickUrl";
 	public static final String UNITY_ADS_CAMPAIGN_PICTURE_KEY = "picture";
