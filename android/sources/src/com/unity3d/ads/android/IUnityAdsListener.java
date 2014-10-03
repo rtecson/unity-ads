@@ -10,6 +10,6 @@ public interface IUnityAdsListener {
 	public void onVideoCompleted (String rewardItemKey, boolean skipped);
 	
 	// Unity Ads campaign events
-	public void onFetchCompleted ();
+	public void onFetchCompleted (String network);
 	public void onFetchFailed ();
 }

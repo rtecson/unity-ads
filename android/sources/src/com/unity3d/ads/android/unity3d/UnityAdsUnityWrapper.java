@@ -114,7 +114,7 @@ public class UnityAdsUnityWrapper implements IUnityAdsListener {
 		return UnityAds.canShow();
 	}
 	
-	public void setNetworks(String networks) {
+	public static void setNetworks(String networks) {
 		UnityAds.setNetworks(networks);
 	}
 	
@@ -212,8 +212,8 @@ public class UnityAdsUnityWrapper implements IUnityAdsListener {
 	}
 
 	@Override
-	public void onFetchCompleted() {
-		sendMessageToUnity3D("onFetchCompleted", null);
+	public void onFetchCompleted(String network) {
+		sendMessageToUnity3D("onFetchCompleted", network);
 	}
 
 	@Override

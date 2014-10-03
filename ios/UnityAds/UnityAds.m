@@ -134,8 +134,8 @@ static UnityAds *sharedUnityAdsInstance = nil;
   return true;
 }
 
-- (BOOL)canShowAds {
-  if ([self canShow] && [[[UnityAdsCampaignManager sharedInstance] getViewableCampaigns] count] > 0) {
+- (BOOL)canShowAds:(NSString *)network {
+  if ([self canShow] && [[[UnityAdsCampaignManager sharedInstance] getViewableCampaigns:network] count] > 0) {
     return YES;
   }
   
@@ -148,11 +148,18 @@ static UnityAds *sharedUnityAdsInstance = nil;
 	return [self adsCanBeShown];
 }
 
+- (void)setNetworks:(NSString *)networks {
+  UALOG_DEBUG(@"");
+  if(networks && [networks length] > 0 && ![[[UnityAdsProperties sharedInstance] networks] isEqualToString:networks]) {
+    [[UnityAdsProperties sharedInstance] setNetworks:networks];
+  }
+}
+
 - (void)setNetwork:(NSString *)network {
   UALOG_DEBUG(@"");
-  if(network && [network length] > 0 && ![[[UnityAdsProperties sharedInstance] network] isEqualToString:network]) {
+  if(network && [network length] > 0 && ![[[UnityAdsProperties sharedInstance] currentNetwork] isEqualToString:network]) {
     UALOG_DEBUG(@"Setting network to %@", network);
-    [[UnityAdsProperties sharedInstance] setNetwork:network];
+    [[UnityAdsProperties sharedInstance] setCurrentNetwork:network];
     // TODO: refresh ad plan
   }
 }
@@ -183,7 +190,7 @@ static UnityAds *sharedUnityAdsInstance = nil;
     [currentZone mergeOptions:options];
     
     if ([currentZone noOfferScreen]) {
-      if (![self canShowAds]) return false;
+      if (![self canShowAds:[[UnityAdsProperties sharedInstance] currentNetwork]]) return false;
       state = kUnityAdsViewStateTypeVideoPlayer;
     }
     
@@ -434,8 +441,15 @@ static UnityAds *sharedUnityAdsInstance = nil;
 
 - (void)notifyDelegateOfCampaignAvailability {
 	if ([self adsCanBeShown]) {
-		if (self.delegate != nil && [self.delegate respondsToSelector:@selector(unityAdsFetchCompleted)])
-			[self.delegate unityAdsFetchCompleted];
+    if (self.delegate != nil && [self.delegate respondsToSelector:@selector(unityAdsFetchCompleted:)]) {
+      NSMutableSet * networks = [[NSMutableSet alloc] init];
+      for(UnityAdsCampaign * campaign in [[UnityAdsCampaignManager sharedInstance] campaigns]) {
+        [networks addObject:campaign.network];
+      }
+      for(NSString * network in networks) {
+        [self.delegate unityAdsFetchCompleted:network];
+      }
+    }
 	}
 }
 

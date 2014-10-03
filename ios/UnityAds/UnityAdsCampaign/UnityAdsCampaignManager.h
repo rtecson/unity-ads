@@ -31,7 +31,7 @@
 - (UnityAdsCampaign *)getCampaignWithId:(NSString *)campaignId;
 - (UnityAdsCampaign *)getCampaignWithITunesId:(NSString *)iTunesId;
 - (UnityAdsCampaign *)getCampaignWithClickUrl:(NSString *)clickUrl;
-- (NSArray *)getViewableCampaigns;
+- (NSArray *)getViewableCampaigns:(NSString *)network;
 - (void)cacheNextCampaignAfter:(UnityAdsCampaign *)currentCampaign;
 
 + (id)sharedInstance;

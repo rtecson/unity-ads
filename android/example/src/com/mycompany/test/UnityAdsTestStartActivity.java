@@ -134,8 +134,8 @@ public class UnityAdsTestStartActivity extends Activity implements IUnityAdsList
 	
 	// Unity Ads campaign events
     @Override
-	public void onFetchCompleted () {
-    	Log.d(_exampleAppLogTag, "UnityAdsTestStartActivity->onFetchCompleted()");
+	public void onFetchCompleted (String network) {
+    	Log.d(_exampleAppLogTag, "UnityAdsTestStartActivity->onFetchCompleted(" + network + ")");
     	
     	_statusImage.setImageResource(R.drawable.unityads_loaded);
     	

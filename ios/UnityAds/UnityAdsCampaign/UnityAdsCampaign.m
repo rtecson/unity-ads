@@ -74,6 +74,11 @@
   NSURL *trailerStreamingURL = [NSURL URLWithString:trailerStreamingURLString];
   self.trailerStreamingURL = trailerStreamingURL;
   
+  id networkValue = [data objectForKey:kUnityAdsCampaignNetworkKey];
+  if (networkValue == nil) failedData = true;
+  NSString *network = [networkValue isKindOfClass:[NSNumber class]] ? [networkValue stringValue] : networkValue;
+  self.network = network;
+  
   NSString *gameIconURLString = [data objectForKey:kUnityAdsCampaignGameIconKey];
   if (gameIconURLString == nil) failedData = true;
   NSURL *gameIconURL = [NSURL URLWithString:gameIconURLString];

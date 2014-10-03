@@ -102,6 +102,7 @@ extern NSString * const kUnityAdsCampaignCustomClickURLKey;
 extern NSString * const kUnityAdsCampaignPictureKey;
 extern NSString * const kUnityAdsCampaignTrailerDownloadableKey;
 extern NSString * const kUnityAdsCampaignTrailerStreamingKey;
+extern NSString * const kUnityAdsCampaignNetworkKey;
 extern NSString * const kUnityAdsCampaignGameIDKey;
 extern NSString * const kUnityAdsCampaignGameNameKey;
 extern NSString * const kUnityAdsCampaignIDKey;
