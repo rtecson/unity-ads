@@ -273,17 +273,14 @@ static UnityAdsCampaignManager *sharedUnityAdsInstanceCampaignManager = nil;
 }
 
 - (NSArray *)getViewableCampaigns:(NSString *) network {
-	UALOG_DEBUG(@"");
   NSMutableArray *retAr = [[NSMutableArray alloc] init];
-  
   if (self.campaigns != nil) {
     for (UnityAdsCampaign* campaign in self.campaigns) {
       if (!campaign.viewed && [campaign.network isEqual:network]) {
         [retAr addObject:campaign];
       }
     }
-  }
-  
+  }  
   return retAr;
 }
 
