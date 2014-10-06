@@ -367,7 +367,8 @@ static UnityAds *sharedUnityAdsInstance = nil;
     [UnityAdsProperties sharedInstance].receivedCampaigns--;
   
   if (![UnityAdsProperties sharedInstance].refreshCampaignsAfterViewed ||
-      ![UnityAdsProperties sharedInstance].receivedCampaigns)
+      ![UnityAdsProperties sharedInstance].receivedCampaigns ||
+      [[UnityAdsCampaignManager sharedInstance] getViewableCampaigns:[UnityAdsProperties sharedInstance].currentNetwork].count == 0)
     [self refreshAds];
 }
 
