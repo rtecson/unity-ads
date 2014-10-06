@@ -160,7 +160,6 @@ static UnityAds *sharedUnityAdsInstance = nil;
   if(network && [network length] > 0 && ![[[UnityAdsProperties sharedInstance] currentNetwork] isEqualToString:network]) {
     UALOG_DEBUG(@"Setting network to %@", network);
     [[UnityAdsProperties sharedInstance] setCurrentNetwork:network];
-    // TODO: refresh ad plan
   }
 }
 
@@ -317,13 +316,7 @@ static UnityAds *sharedUnityAdsInstance = nil;
   
   if ([name isEqualToString:UIApplicationWillEnterForegroundNotification]) {
     UAAssert([NSThread isMainThread]);
-    
-    if ([[UnityAdsMainViewController sharedInstance] mainControllerVisible]) {
-      UALOG_DEBUG(@"Ad view visible, not refreshing.");
-    }
-    else {
-      [self refreshAds];
-    }
+    [self refreshAds];
   }
 }
 
@@ -334,9 +327,12 @@ static UnityAds *sharedUnityAdsInstance = nil;
   return false;
 }
 
-#pragma mark - Private data refreshing
-
 - (void)refreshAds {
+  if ([[UnityAdsMainViewController sharedInstance] mainControllerVisible]) {
+    UALOG_DEBUG(@"Ad view visible, not refreshing.");
+    return;
+  }
+  
 	if ([[UnityAdsProperties sharedInstance] adsGameId] == nil) {
 		UALOG_ERROR(@"Unity Ads has not been started properly. Launch with -startWithGameId: first.");
 		return;
@@ -361,9 +357,18 @@ static UnityAds *sharedUnityAdsInstance = nil;
 - (void)mainControllerDidClose {
 	UAAssert([NSThread isMainThread]);
 	UALOG_DEBUG(@"");
-  
   if (self.delegate != nil && [self.delegate respondsToSelector:@selector(unityAdsDidHide)])
 		[self.delegate unityAdsDidHide];
+  
+  if ([UnityAdsProperties sharedInstance].refreshCampaignsAfterViewed > 0)
+  [UnityAdsProperties sharedInstance].refreshCampaignsAfterViewed--;
+  
+  if ([UnityAdsProperties sharedInstance].receivedCampaigns > 0)
+    [UnityAdsProperties sharedInstance].receivedCampaigns--;
+  
+  if (![UnityAdsProperties sharedInstance].refreshCampaignsAfterViewed ||
+      ![UnityAdsProperties sharedInstance].receivedCampaigns)
+    [self refreshAds];
 }
 
 - (void)mainControllerWillOpen {
