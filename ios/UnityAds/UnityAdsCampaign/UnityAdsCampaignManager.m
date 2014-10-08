@@ -69,7 +69,7 @@ static UnityAdsCampaignManager *sharedUnityAdsInstanceCampaignManager = nil;
 }
 
 - (void)refreshAds:(id)sender {
-  [[UnityAds sharedInstance] refreshAds];
+  [[UnityAds sharedInstance] performSelector:@selector(refreshAds) withObject:nil];
 }
 
 - (void)_processCampaignDownloadData {
