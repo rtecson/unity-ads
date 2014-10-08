@@ -88,6 +88,7 @@ NSString * const kUnityAdsCampaignCustomClickURLKey = @"customClickUrl";
 NSString * const kUnityAdsCampaignPictureKey = @"picture";
 NSString * const kUnityAdsCampaignTrailerDownloadableKey = @"trailerDownloadable";
 NSString * const kUnityAdsCampaignTrailerStreamingKey = @"trailerStreaming";
+NSString * const kUnityAdsCampaignNetworkKey = @"network";
 NSString * const kUnityAdsCampaignGameIconKey = @"gameIcon";
 NSString * const kUnityAdsCampaignGameIDKey = @"gameId";
 NSString * const kUnityAdsCampaignGameNameKey = @"gameName";
@@ -99,6 +100,9 @@ NSString * const kUnityAdsCampaignAllowedToCacheVideoKey = @"allowCache";
 NSString * const kUnityAdsCampaignBypassAppSheet = @"bypassAppSheet";
 NSString * const kUnityAdsCampaignExpectedFileSize = @"trailerSize";
 NSString * const kUnityAdsCampaignAllowVideoSkipKey = @"allowSkipVideoInSeconds";
+NSString * const kUnityAdsRefreshCampaignsAfterViewed = @"refreshCampaignsAfterViewed";
+NSString * const kUnityAdsRefreshCampaignsAfterSeconds = @"refreshCampaignsAfterSeconds";
+
 
 /* Reward Item JSON Properties */
 

@@ -43,6 +43,7 @@ public class UnityAdsTestStartActivity extends Activity implements IUnityAdsList
 		
 		UnityAds.setDebugMode(true);
 		//UnityAds.setTestMode(true);
+		UnityAds.setNetworks("mobile_android,mobile");
 
 		_optionsView = ((RelativeLayout)findViewById(R.id.unityads_example_optionsview));
 		
@@ -133,8 +134,8 @@ public class UnityAdsTestStartActivity extends Activity implements IUnityAdsList
 	
 	// Unity Ads campaign events
     @Override
-	public void onFetchCompleted () {
-    	Log.d(_exampleAppLogTag, "UnityAdsTestStartActivity->onFetchCompleted()");
+	public void onFetchCompleted (String network) {
+    	Log.d(_exampleAppLogTag, "UnityAdsTestStartActivity->onFetchCompleted(" + network + ")");
     	
     	_statusImage.setImageResource(R.drawable.unityads_loaded);
     	
@@ -158,7 +159,8 @@ public class UnityAdsTestStartActivity extends Activity implements IUnityAdsList
 				optionsMap.put(UnityAds.UNITY_ADS_OPTION_GAMERSID_KEY, "gom");
 				optionsMap.put(UnityAds.UNITY_ADS_OPTION_MUTE_VIDEO_SOUNDS, false);
 				optionsMap.put(UnityAds.UNITY_ADS_OPTION_VIDEO_USES_DEVICE_ORIENTATION, false);
-				
+
+				UnityAds.setNetwork("mobile");
 				UnityAds.show(optionsMap);
 				
 				// Open without options (defaults)

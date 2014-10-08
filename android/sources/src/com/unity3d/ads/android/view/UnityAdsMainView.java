@@ -417,7 +417,7 @@ public class UnityAdsMainView extends RelativeLayout implements IUnityAdsWebView
 	@Override
 	public void onWebAppLoaded () {
 		try {
-			ArrayList<UnityAdsCampaign> viewableCampaigns = UnityAds.webdata.getViewableVideoPlanCampaigns();
+			ArrayList<UnityAdsCampaign> viewableCampaigns = UnityAds.webdata.getViewableVideoPlanCampaigns(UnityAdsProperties.CURRENT_NETWORK);
 			JSONObject initData = UnityAds.webdata.getData();
 			JSONArray campaignArray = initData.getJSONObject("data").getJSONArray("campaigns");
 			JSONArray viewableCampaignArray = new JSONArray();

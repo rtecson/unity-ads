@@ -13,6 +13,7 @@
 #import "UnityAdsIncentivizedZone.h"
 #import "UnityAdsWebAppController.h"
 #import "UnityAdsInstrumentation.h"
+#import "UnityAdsProperties.h"
 
 @implementation UnityAdsViewStateVideoPlayer
 
@@ -121,7 +122,8 @@
   if ([currentZone noOfferScreen]) {
     [[UnityAdsCampaignManager sharedInstance] setSelectedCampaign:nil];
     
-    UnityAdsCampaign *campaign = [[[UnityAdsCampaignManager sharedInstance] getViewableCampaigns] objectAtIndex:0];
+    NSString *network = [[UnityAdsProperties sharedInstance] currentNetwork];
+    UnityAdsCampaign *campaign = [[[UnityAdsCampaignManager sharedInstance] getViewableCampaigns:network] objectAtIndex:0];
     
     if (campaign != nil) {
       [[UnityAdsCampaignManager sharedInstance] setSelectedCampaign:campaign];

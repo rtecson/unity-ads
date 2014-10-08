@@ -9,6 +9,7 @@ import com.unity3d.ads.android.UnityAds;
 import com.unity3d.ads.android.UnityAdsDeviceLog;
 import com.unity3d.ads.android.IUnityAdsListener;
 import com.unity3d.ads.android.UnityAdsUtils;
+import com.unity3d.ads.android.properties.UnityAdsProperties;
 
 public class UnityAdsUnityWrapper implements IUnityAdsListener {
 	private Activity _startupActivity = null;
@@ -16,7 +17,6 @@ public class UnityAdsUnityWrapper implements IUnityAdsListener {
 	private String _gameId = null;
 	private Method _sendMessageMethod = null;
 	private boolean _testMode = false;
-	private boolean _debugMode = false;
 	private static Boolean _constructed = false;
 	private static Boolean _initialized = false;
 	
@@ -48,10 +48,6 @@ public class UnityAdsUnityWrapper implements IUnityAdsListener {
 		return UnityAds.getSDKVersion();
 	}
 
-	public void init (final String gameId, final Activity activity, boolean testMode, boolean debugMode, String gameObject) {
-		init(gameId, activity, testMode, debugMode ? 4 : 3, gameObject);
-	}
-
 	public void init (final String gameId, final Activity activity, boolean testMode, final int logLevel, String gameObject) {
 		if (!_initialized) {
 			_initialized = true;
@@ -81,7 +77,7 @@ public class UnityAdsUnityWrapper implements IUnityAdsListener {
 	}
 
 	public boolean show (final String zoneId, final String rewardItemKey, final String optionsString) {
-		if (UnityAds.canShowAds() && UnityAds.canShow()) {
+		if (UnityAds.canShowAds(UnityAdsProperties.CURRENT_NETWORK) && UnityAds.canShow()) {
 			HashMap<String, Object> options = null;
 			
 			if(optionsString.length() > 0) {
@@ -108,12 +104,16 @@ public class UnityAdsUnityWrapper implements IUnityAdsListener {
 		UnityAds.hide();
 	}
 	
-	public boolean canShowAds () {
-		return UnityAds.canShowAds();
+	public boolean canShowAds (String network) {
+		return UnityAds.canShowAds(network);
 	}
 	
 	public boolean canShow () {
 		return UnityAds.canShow();
+	}
+	
+	public static void setNetworks(String networks) {
+		UnityAds.setNetworks(networks);
 	}
 	
 	public void setNetwork(String network) {
@@ -212,8 +212,8 @@ public class UnityAdsUnityWrapper implements IUnityAdsListener {
 	}
 
 	@Override
-	public void onFetchCompleted() {
-		sendMessageToUnity3D("onFetchCompleted", null);
+	public void onFetchCompleted(String network) {
+		sendMessageToUnity3D("onFetchCompleted", network);
 	}
 
 	@Override

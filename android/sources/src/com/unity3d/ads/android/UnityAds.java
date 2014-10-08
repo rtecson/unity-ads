@@ -2,7 +2,10 @@ package com.unity3d.ads.android;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -77,7 +80,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 	// Temporary data
 	private static boolean _initialized = false;
 	private static boolean _showingAds = false;
-	private static boolean _adsReadySent = false;
+	private static Set<String> _adsReadySent = new HashSet<String>();
 	private static boolean _openRequestFromDeveloper = false;
 	private static boolean _refreshAfterShowAds = false;
 	private static boolean _fixMainview = false;
@@ -177,16 +180,16 @@ public class UnityAds implements IUnityAdsCacheListener,
 		
 		return false;
 	}
+	
+	public static void setNetworks(String networks) {
+		UnityAdsProperties.NETWORKS = networks;
+	}
 
 	public static void setNetwork(String network) {
 		UnityAdsDeviceLog.entered();
 		UnityAdsDeviceLog.debug(network);
-		if(network != null && network.length() > 0 && UnityAdsProperties.NETWORK != network) {
-			UnityAdsProperties.NETWORK = network;
-
-			if(_initialized) {
-				refreshCampaigns(true);
-			}
+		if(network != null && network.length() > 0 && !UnityAdsProperties.CURRENT_NETWORK.equals(network)) {
+			UnityAdsProperties.CURRENT_NETWORK = network;
 		}
 	}
 	
@@ -222,7 +225,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 				currentZone.mergeOptions(options);
 				
 				if (currentZone.noOfferScreen()) {
-					ArrayList<UnityAdsCampaign> viewableCampaigns = webdata.getViewableVideoPlanCampaigns();
+					ArrayList<UnityAdsCampaign> viewableCampaigns = webdata.getViewableVideoPlanCampaigns(UnityAdsProperties.CURRENT_NETWORK);
 
 					if (viewableCampaigns.size() > 0) {
 						UnityAdsCampaign selectedCampaign = viewableCampaigns.get(0);
@@ -255,10 +258,10 @@ public class UnityAds implements IUnityAdsCacheListener,
 		return show(null);
 	}
 	
-	public static boolean canShowAds () {
+	public static boolean canShowAds (String network) {
 			return webdata != null && 
-			webdata.getViewableVideoPlanCampaigns() != null && 
-			webdata.getViewableVideoPlanCampaigns().size() > 0;
+			webdata.getViewableVideoPlanCampaigns(network) != null && 
+			webdata.getViewableVideoPlanCampaigns(network).size() > 0;
 	}
 
 	public static boolean canShow () {
@@ -409,10 +412,11 @@ public class UnityAds implements IUnityAdsCacheListener,
 	public void onCampaignReady (UnityAdsCampaignHandler campaignHandler) {
 		if (campaignHandler == null || campaignHandler.getCampaign() == null) return;
 				
-		UnityAdsDeviceLog.debug(campaignHandler.getCampaign().toString());
+		UnityAdsCampaign campaign = campaignHandler.getCampaign();
+		UnityAdsDeviceLog.debug(campaign.toString());
 
-		if (canShowAds())
-			sendReadyEvent();
+		if (canShow())
+			sendReadyEvent(campaign.getNetwork());
 	}
 	
 	@Override
@@ -470,7 +474,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 	
 	@Override
 	public void onWebDataFailed () {
-		if (_adsListener != null && !_adsReadySent)
+		if (_adsListener != null && _adsReadySent.isEmpty())
 			_adsListener.onFetchFailed();
 	}
 	
@@ -539,7 +543,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 		UnityAdsDeviceLog.entered();
 		Boolean dataOk = true;
 		
-		if (canShowAds()) {
+		if (canShow()) {
 			JSONObject setViewData = new JSONObject();
 			
 			try {				
@@ -551,7 +555,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 			
 			if (dataOk) {
 				mainview.webview.setWebViewCurrentView(UnityAdsConstants.UNITY_ADS_WEBVIEW_VIEWTYPE_START, setViewData);
-				sendReadyEvent();			
+				sendReadyEvent(null);			
 			}
 		}
 	}
@@ -772,15 +776,15 @@ public class UnityAds implements IUnityAdsCacheListener,
 		}
 	}
 	
-	private static void sendReadyEvent () {
-		if (!_adsReadySent && _adsListener != null) {
+	private static void sendReadyEvent (final String network) {
+		if (!_adsReadySent.contains(network) && _adsListener != null) {
 			UnityAdsUtils.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					if(!_adsReadySent) {
+					if(!_adsReadySent.contains(network)) {
 						UnityAdsDeviceLog.debug("Unity Ads ready.");
-						_adsListener.onFetchCompleted();
-						_adsReadySent = true;
+						_adsListener.onFetchCompleted(network);
+						_adsReadySent.add(network);
 					}
 				}
 			});
@@ -937,7 +941,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 		}
 
 		if (webdata != null && webdata.getVideoPlanCampaigns() != null) {
-			if(webdata.getViewableVideoPlanCampaigns().size() == 0) {
+			if(webdata.getViewableVideoPlanCampaigns(UnityAdsProperties.CURRENT_NETWORK).size() == 0) {
 				UnityAdsDeviceLog.debug("All available videos watched, refreshing ad plan from server");
 				if(webdata != null) {
 					webdata.initCampaigns();

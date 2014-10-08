@@ -30,7 +30,7 @@ static UnityAdsProperties *sharedProperties = nil;
   if (self = [super init]) {
     [self setMaxNumberOfAnalyticsRetries:5];
     [self setCampaignDataUrl:@"https://impact.applifier.com/mobile/campaigns"];
-    [self setNetwork:@"ios"];
+    [self setCurrentNetwork:@"ios"];
     [self setCampaignQueryString:[self _createCampaignQueryString]];
     [self setSdkIsCurrent:true];
     [self setExpectedSdkVersion:@"0"];
@@ -48,7 +48,7 @@ static UnityAdsProperties *sharedProperties = nil;
   
   // Mandatory params
   queryParams = [NSString stringWithFormat:@"%@%@=%@", queryParams, kUnityAdsInitQueryParamPlatformKey, @"ios"];
-  queryParams = [NSString stringWithFormat:@"%@&%@=%@", queryParams, kUnityAdsInitQueryParamNetworkKey, [self network]];
+  queryParams = [NSString stringWithFormat:@"%@&%@=%@", queryParams, kUnityAdsInitQueryParamNetworkKey, [self networks]];
   queryParams = [NSString stringWithFormat:@"%@&%@=%@", queryParams, kUnityAdsInitQueryParamGameIdKey, [self adsGameId]];
   queryParams = [NSString stringWithFormat:@"%@&%@=%@", queryParams, kUnityAdsInitQueryParamSdkVersionKey, kUnityAdsVersion];
   

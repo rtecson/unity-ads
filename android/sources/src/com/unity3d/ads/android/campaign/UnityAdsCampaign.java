@@ -28,6 +28,7 @@ public class UnityAdsCampaign {
 	
 	private JSONObject _campaignJson = null;
 	private String[] _requiredKeys = new String[] {
+			UnityAdsConstants.UNITY_ADS_CAMPAIGN_NETWORK_KEY,
 			UnityAdsConstants.UNITY_ADS_CAMPAIGN_ENDSCREEN_KEY, 
 			UnityAdsConstants.UNITY_ADS_CAMPAIGN_CLICKURL_KEY, 
 			UnityAdsConstants.UNITY_ADS_CAMPAIGN_PICTURE_KEY, 
@@ -118,6 +119,17 @@ public class UnityAdsCampaign {
 		}
 		
 		return null;		
+	}
+	
+	public String getNetwork() {
+		if(checkDataIntegrity()) {
+			try {
+				return _campaignJson.getString(UnityAdsConstants.UNITY_ADS_CAMPAIGN_NETWORK_KEY);
+			} catch(Exception e) {
+				UnityAdsDeviceLog.error("Network is missing from the campaign");
+			}
+		}
+		return null;
 	}
 	
 	public String getPicture () {

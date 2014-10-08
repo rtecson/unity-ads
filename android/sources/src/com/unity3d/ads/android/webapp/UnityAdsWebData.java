@@ -125,7 +125,7 @@ public class UnityAdsWebData {
 		return null;
 	}
 	
-	public ArrayList<UnityAdsCampaign> getViewableVideoPlanCampaigns () {
+	public ArrayList<UnityAdsCampaign> getViewableVideoPlanCampaigns (String network) {
 		ArrayList<UnityAdsCampaign> viewableCampaigns = null;
 		UnityAdsCampaign currentCampaign = null; 
 		
@@ -133,8 +133,11 @@ public class UnityAdsWebData {
 			viewableCampaigns = new ArrayList<UnityAdsCampaign>();
 			for (int i = 0; i < _campaigns.size(); i++) {
 				currentCampaign = _campaigns.get(i);
-				if (currentCampaign != null && !currentCampaign.getCampaignStatus().equals(UnityAdsCampaignStatus.VIEWED))
+				if (currentCampaign != null && 
+					!currentCampaign.getCampaignStatus().equals(UnityAdsCampaignStatus.VIEWED) && 
+					currentCampaign.getNetwork().equals(network)) {
 					viewableCampaigns.add(currentCampaign);
+				}
 			}
 		}
 		
@@ -180,7 +183,7 @@ public class UnityAdsWebData {
 
 			try {
 				queryParams = String.format("%s&%s=%s", queryParams, UnityAdsConstants.UNITY_ADS_INIT_QUERYPARAM_PLATFORM_KEY, "android");
-				queryParams = String.format("%s&%s=%s", queryParams, UnityAdsConstants.UNITY_ADS_INIT_QUERYPARAM_NETWORK_KEY, UnityAdsProperties.NETWORK);
+				queryParams = String.format("%s&%s=%s", queryParams, UnityAdsConstants.UNITY_ADS_INIT_QUERYPARAM_NETWORK_KEY, UnityAdsProperties.CURRENT_NETWORK);
 
 				String advertisingId = UnityAdsDevice.getAdvertisingTrackingId();
 				if(advertisingId != null) {

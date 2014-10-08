@@ -43,7 +43,6 @@
 - (void)reInitialize {
   dispatch_async(self.queue, ^{
     [[UnityAdsWebAppController sharedInstance] setWebViewInitialized:NO];
-		[[UnityAdsProperties sharedInstance] refreshCampaignQueryString];
 		[self performSelector:@selector(refreshCampaignManager) onThread:self.backgroundThread withObject:nil waitUntilDone:NO];
     [self performSelector:@selector(initAnalyticsUploader) onThread:self.backgroundThread withObject:nil waitUntilDone:NO];
 	});

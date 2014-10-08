@@ -134,8 +134,8 @@ static UnityAds *sharedUnityAdsInstance = nil;
   return true;
 }
 
-- (BOOL)canShowAds {
-  if ([self canShow] && [[[UnityAdsCampaignManager sharedInstance] getViewableCampaigns] count] > 0) {
+- (BOOL)canShowAds:(NSString *)network {
+  if ([self canShow] && [[[UnityAdsCampaignManager sharedInstance] getViewableCampaigns:network] count] > 0) {
     return YES;
   }
   
@@ -148,12 +148,18 @@ static UnityAds *sharedUnityAdsInstance = nil;
 	return [self adsCanBeShown];
 }
 
+- (void)setNetworks:(NSString *)networks {
+  UALOG_DEBUG(@"");
+  if(networks && [networks length] > 0 && ![[[UnityAdsProperties sharedInstance] networks] isEqualToString:networks]) {
+    [[UnityAdsProperties sharedInstance] setNetworks:networks];
+  }
+}
+
 - (void)setNetwork:(NSString *)network {
   UALOG_DEBUG(@"");
-  if(network && [network length] > 0 && ![[[UnityAdsProperties sharedInstance] network] isEqualToString:network]) {
+  if(network && [network length] > 0 && ![[[UnityAdsProperties sharedInstance] currentNetwork] isEqualToString:network]) {
     UALOG_DEBUG(@"Setting network to %@", network);
-    [[UnityAdsProperties sharedInstance] setNetwork:network];
-    // TODO: refresh ad plan
+    [[UnityAdsProperties sharedInstance] setCurrentNetwork:network];
   }
 }
 
@@ -183,7 +189,7 @@ static UnityAds *sharedUnityAdsInstance = nil;
     [currentZone mergeOptions:options];
     
     if ([currentZone noOfferScreen]) {
-      if (![self canShowAds]) return false;
+      if (![self canShowAds:[[UnityAdsProperties sharedInstance] currentNetwork]]) return false;
       state = kUnityAdsViewStateTypeVideoPlayer;
     }
     
@@ -310,13 +316,7 @@ static UnityAds *sharedUnityAdsInstance = nil;
   
   if ([name isEqualToString:UIApplicationWillEnterForegroundNotification]) {
     UAAssert([NSThread isMainThread]);
-    
-    if ([[UnityAdsMainViewController sharedInstance] mainControllerVisible]) {
-      UALOG_DEBUG(@"Ad view visible, not refreshing.");
-    }
-    else {
-      [self refreshAds];
-    }
+    [self refreshAds];
   }
 }
 
@@ -327,9 +327,12 @@ static UnityAds *sharedUnityAdsInstance = nil;
   return false;
 }
 
-#pragma mark - Private data refreshing
-
 - (void)refreshAds {
+  if ([[UnityAdsMainViewController sharedInstance] mainControllerVisible]) {
+    UALOG_DEBUG(@"Ad view visible, not refreshing.");
+    return;
+  }
+  
 	if ([[UnityAdsProperties sharedInstance] adsGameId] == nil) {
 		UALOG_ERROR(@"Unity Ads has not been started properly. Launch with -startWithGameId: first.");
 		return;
@@ -354,9 +357,19 @@ static UnityAds *sharedUnityAdsInstance = nil;
 - (void)mainControllerDidClose {
 	UAAssert([NSThread isMainThread]);
 	UALOG_DEBUG(@"");
-  
   if (self.delegate != nil && [self.delegate respondsToSelector:@selector(unityAdsDidHide)])
 		[self.delegate unityAdsDidHide];
+  
+  if ([UnityAdsProperties sharedInstance].refreshCampaignsAfterViewed > 0)
+  [UnityAdsProperties sharedInstance].refreshCampaignsAfterViewed--;
+  
+  if ([UnityAdsProperties sharedInstance].receivedCampaigns > 0)
+    [UnityAdsProperties sharedInstance].receivedCampaigns--;
+  
+  if (![UnityAdsProperties sharedInstance].refreshCampaignsAfterViewed ||
+      ![UnityAdsProperties sharedInstance].receivedCampaigns ||
+      [[UnityAdsCampaignManager sharedInstance] getViewableCampaigns:[UnityAdsProperties sharedInstance].currentNetwork].count == 0)
+    [self refreshAds];
 }
 
 - (void)mainControllerWillOpen {
@@ -434,8 +447,15 @@ static UnityAds *sharedUnityAdsInstance = nil;
 
 - (void)notifyDelegateOfCampaignAvailability {
 	if ([self adsCanBeShown]) {
-		if (self.delegate != nil && [self.delegate respondsToSelector:@selector(unityAdsFetchCompleted)])
-			[self.delegate unityAdsFetchCompleted];
+    if (self.delegate != nil && [self.delegate respondsToSelector:@selector(unityAdsFetchCompleted:)]) {
+      NSMutableSet * networks = [[NSMutableSet alloc] init];
+      for(UnityAdsCampaign * campaign in [[UnityAdsCampaignManager sharedInstance] campaigns]) {
+        [networks addObject:campaign.network];
+      }
+      for(NSString * network in networks) {
+        [self.delegate unityAdsFetchCompleted:network];
+      }
+    }
 	}
 }
 
