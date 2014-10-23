@@ -54,6 +54,8 @@ extern NSString * const kUnityAdsOptionVideoUsesDeviceOrientation;
 - (void)setTestOptionsId:(NSString *)optionsId;
 - (void)setDebugMode:(BOOL)debugMode;
 - (void)setTestMode:(BOOL)testModeEnabled;
+- (void)enableUnityDeveloperInternalTestMode;
+
 - (BOOL)isDebugMode;
 - (BOOL)startWithGameId:(NSString *)gameId andViewController:(UIViewController *)viewController;
 - (BOOL)startWithGameId:(NSString *)gameId;

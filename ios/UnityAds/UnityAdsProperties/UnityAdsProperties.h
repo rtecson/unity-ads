@@ -34,9 +34,11 @@
 @property (nonatomic, assign) NSUInteger refreshCampaignsAfterViewed;
 @property (nonatomic, assign) NSUInteger receivedCampaigns;
 @property (nonatomic, assign) NSTimeInterval refreshCampaignsAfterSeconds;
+@property (nonatomic, assign) BOOL unityDeveloperInternalTestMode;
 
 + (UnityAdsProperties *)sharedInstance;
 - (void)refreshCampaignQueryString;
+- (void)enableUnityDeveloperInternalTestMode;
 - (NSString *)adsVersion;
 
 @end

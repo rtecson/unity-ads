@@ -137,6 +137,10 @@ public class UnityAds implements IUnityAdsCacheListener,
 		return UnityAdsConstants.UNITY_ADS_VERSION;
 	}
 
+	public static void enableUnityDeveloperInternalTestMode() {
+		UnityAdsProperties.CAMPAIGN_DATA_URL = "https://impact.applifier.com/mobile/campaigns";
+		UnityAdsProperties.UNITY_DEVELOPER_INTERNAL_TEST = true;
+	}
 
 	/* PUBLIC METHODS */
 	
@@ -1013,6 +1017,11 @@ public class UnityAds implements IUnityAdsCacheListener,
 			return;
 		}
 
+		int delay = 30;
+		if(_singleTaskApplication) {
+			delay = 250;
+		}
+
 		Handler handler = new Handler(Looper.getMainLooper());
 		handler.postDelayed(new Runnable() {
 			@Override
@@ -1048,7 +1057,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 
 				refreshCampaigns(false);
 			}
-		}, 30);
+		}, delay);
 	}
 
 	private static class UnityAdsPlayVideoRunner implements Runnable {

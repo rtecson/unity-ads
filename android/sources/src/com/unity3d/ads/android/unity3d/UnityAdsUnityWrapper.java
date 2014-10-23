@@ -189,6 +189,10 @@ public class UnityAdsUnityWrapper implements IUnityAdsListener {
 		UnityAdsDeviceLog.setLogLevel(logLevel);
 	}
 
+	public void enableUnityDeveloperInternalTestMode() {
+		UnityAds.enableUnityDeveloperInternalTestMode();
+	}
+
 	// IUnityAdsListener
 	
 	@Override

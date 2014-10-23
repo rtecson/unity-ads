@@ -201,6 +201,10 @@ extern "C" {
     void setDebugMode(bool debugMode) {
         [[UnityAds sharedInstance] setDebugMode:debugMode];
     }
+
+    void enableUnityDeveloperInternalTestMode () {
+        [[UnityAds sharedInstance] enableUnityDeveloperInternalTestMode];
+    }
 }
 
 @end
