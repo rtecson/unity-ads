@@ -19,6 +19,8 @@
 @property (nonatomic, strong) NSURLConnection *urlConnection;
 @property (nonatomic, strong) NSMutableData *campaignDownloadData;
 @property (nonatomic, strong) NSTimer * refreshCampaignsTimer;
+@property (nonatomic, strong) NSOperationQueue *installedAppsQueue;
+@property (nonatomic, assign) BOOL installedAppsSent;
 @end
 
 @implementation UnityAdsCampaignManager
@@ -36,8 +38,34 @@ static UnityAdsCampaignManager *sharedUnityAdsInstanceCampaignManager = nil;
 	return sharedUnityAdsInstanceCampaignManager;
 }
 
+- (id)init {
+  if (self = [super init]) {
+    [self setInstalledAppsSent:FALSE];
+  }
+  return self;
+}
 
 #pragma mark - Private
+
++ (BOOL)isInstalled:(NSArray *)urlSchemes {
+  __block int matchesCount = 0;
+  [urlSchemes enumerateObjectsUsingBlock:^(NSString * urlScheme, NSUInteger idx, BOOL *stop) {
+    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@://", urlScheme]]]) {
+      matchesCount++;
+    }
+  }];
+  return matchesCount == urlSchemes.count && urlSchemes.count;
+}
+
++ (NSArray *)installedApps:(NSArray *)urlSchemeMap {
+  __block NSMutableArray * installedApps = [NSMutableArray new];
+  [urlSchemeMap enumerateObjectsUsingBlock:^(NSDictionary *urlSchemesEntry, NSUInteger idx, BOOL *stop) {
+    if ([UnityAdsCampaignManager isInstalled:[urlSchemesEntry objectForKey:@"schemes"]]) {
+      [installedApps addObject:[urlSchemesEntry objectForKey:@"id"]];
+    }
+  }];
+  return [installedApps copy];
+}
 
 - (void)_campaignDataReceived {
   [self _processCampaignDownloadData];
@@ -54,9 +82,17 @@ static UnityAdsCampaignManager *sharedUnityAdsInstanceCampaignManager = nil;
 	for (id campaignDictionary in campaignArray) {
 		if ([campaignDictionary isKindOfClass:[NSDictionary class]]) {
 			UnityAdsCampaign *campaign = [[UnityAdsCampaign alloc] initWithData:campaignDictionary];
-      
       if (campaign.isValidCampaign) {
-        [campaigns addObject:campaign];
+        if([[[UnityAdsProperties sharedInstance] appFiltering] isEqualToString:@"simple"] || [[[UnityAdsProperties sharedInstance] appFiltering] isEqualToString:@"advanced"]) {
+          if(![UnityAdsCampaignManager isInstalled:campaign.urlSchemes]) {
+            [campaigns addObject:campaign];
+          } else {
+            UALOG_DEBUG(@"Filtered installed game %@", campaign.gameID);
+            [[[UnityAdsProperties sharedInstance] installedApps] addObject:campaign.gameID];
+          }
+        } else {
+          [campaigns addObject:campaign];
+        }
       }
 		}
 		else {
@@ -64,7 +100,6 @@ static UnityAdsCampaignManager *sharedUnityAdsInstanceCampaignManager = nil;
 			continue;
 		}
 	}
-	
 	return campaigns;
 }
 
@@ -93,6 +128,8 @@ static UnityAdsCampaignManager *sharedUnityAdsInstanceCampaignManager = nil;
     return;
   }
   
+  [[[UnityAdsProperties sharedInstance] installedApps] removeAllObjects];
+  
   UALOG_DEBUG(@"%@", [_campaignData JSONRepresentation]);
 	UAAssert([_campaignData isKindOfClass:[NSDictionary class]]);
 	
@@ -111,6 +148,25 @@ static UnityAdsCampaignManager *sharedUnityAdsInstanceCampaignManager = nil;
     [zoneManager clearZones];
     int addedZones = [zoneManager addZones:[UnityAdsZoneParser parseZones:[jsonDictionary objectForKey:kUnityAdsZonesRootKey]]];
     if(addedZones == 0) validData = NO;
+    
+    NSString * appFiltering = (NSString *)[jsonDictionary objectForKey:kUnityAdsAppFilteringKey];
+    if(appFiltering != nil && [appFiltering length] > 0) {
+      [[UnityAdsProperties sharedInstance] setAppFiltering:appFiltering];
+    }
+    
+    NSString * urlSchemeMapString = (NSString *)[jsonDictionary objectForKey:kUnityAdsUrlSchemeMapKey];
+    if(urlSchemeMapString != nil && [urlSchemeMapString length] > 0) {
+      [[UnityAdsProperties sharedInstance] setUrlSchemeMap:urlSchemeMapString];
+    }
+    
+    NSString * installedAppsUrlString = (NSString *)[jsonDictionary objectForKey:kUnityAdsInstalledAppsUrlKey];
+    if(installedAppsUrlString != nil && [installedAppsUrlString length] > 0) {
+      [[UnityAdsProperties sharedInstance] setInstalledAppsUrl:installedAppsUrlString];
+    }
+    
+    if([[[UnityAdsProperties sharedInstance] appFiltering] isEqualToString:@"advanced"]) {
+      [self _sendInstalledApps];
+    }
     
     self.campaigns = [self deserializeCampaigns:[jsonDictionary objectForKey:kUnityAdsCampaignsKey]];
     if (self.campaigns == nil || [self.campaigns count] == 0) validData = NO;
@@ -150,7 +206,7 @@ static UnityAdsCampaignManager *sharedUnityAdsInstanceCampaignManager = nil;
       [[UnityAdsProperties sharedInstance] setGamerId:gamerId];
       
       [self.campaigns enumerateObjectsUsingBlock:^(UnityAdsCampaign *campaign, NSUInteger idx, BOOL *stop) {
-        if (campaign.shouldCacheVideo) {
+        if ((campaign.shouldCacheVideo && campaign.allowedToCacheVideo) || (campaign.allowedToCacheVideo && idx == 0)) {
           [[UnityAdsCacheManager sharedInstance] cache:ResourceTypeTrailerVideo forCampaign:campaign];
         }
       }];
@@ -169,6 +225,42 @@ static UnityAdsCampaignManager *sharedUnityAdsInstanceCampaignManager = nil;
   self.campaignDownloadData = nil;
 }
 
+- (NSArray *)_parseUrlSchemeMap:(NSString *)urlSchemeMapString {
+  NSDictionary *urlSchemeMap = [urlSchemeMapString JSONValue];
+  return (NSArray *)[urlSchemeMap objectForKey:@"urlSchemes"];
+}
+
+- (void)_sendInstalledApps {
+  if([self installedAppsSent]) return;
+  [self setInstalledAppsSent:TRUE];
+  [self setInstalledAppsQueue:[NSOperationQueue new]];
+  NSURLRequest *urlSchemeMapRequest = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:[UnityAdsProperties sharedInstance].urlSchemeMap] cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:60];
+  [NSURLConnection sendAsynchronousRequest:urlSchemeMapRequest queue:[self installedAppsQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+    if(data == nil) {
+      UALOG_DEBUG(@"Failed to receive url scheme map");
+      return;
+    }
+    
+    NSArray *urlSchemeMap = [self _parseUrlSchemeMap:[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]];
+    if(urlSchemeMap != nil) {
+      NSArray *installedApps = [UnityAdsCampaignManager installedApps:urlSchemeMap];
+      
+      if([installedApps count] > 0) {
+        NSURL *installedAppsUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", [UnityAdsProperties sharedInstance].installedAppsUrl, [[UnityAdsProperties sharedInstance] createCampaignQueryString:FALSE]]];
+        NSMutableURLRequest *installedAppsRequest = [[NSMutableURLRequest alloc] initWithURL:installedAppsUrl cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:60];
+        [installedAppsRequest setHTTPMethod:@"POST"];
+        [installedAppsRequest setHTTPBody:[[installedApps componentsJoinedByString:@","] dataUsingEncoding:NSUTF8StringEncoding]];
+        [NSURLConnection sendAsynchronousRequest:installedAppsRequest queue:[self installedAppsQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+          if(data == nil) {
+            UALOG_DEBUG(@"Error sending installed apps");
+          } else {
+            UALOG_DEBUG(@"Sent installed apps successfully");
+          }
+        }];
+      }
+    }
+  }];
+}
 
 #pragma mark - Public
 
@@ -177,6 +269,7 @@ static UnityAdsCampaignManager *sharedUnityAdsInstanceCampaignManager = nil;
 	
 	NSString *urlString = [[UnityAdsProperties sharedInstance] campaignDataUrl];
 	
+  [[UnityAdsProperties sharedInstance] refreshCampaignQueryString];
   if ([[UnityAdsProperties sharedInstance] campaignQueryString] != nil)
 		urlString = [urlString stringByAppendingString:[[UnityAdsProperties sharedInstance] campaignQueryString]];
   
@@ -276,7 +369,8 @@ static UnityAdsCampaignManager *sharedUnityAdsInstanceCampaignManager = nil;
   NSMutableArray *retAr = [[NSMutableArray alloc] init];
   if (self.campaigns != nil) {
     for (UnityAdsCampaign* campaign in self.campaigns) {
-      if (!campaign.viewed && [campaign.network isEqual:network]) {
+      BOOL inCache = [[UnityAdsCacheManager sharedInstance] is:ResourceTypeTrailerVideo cachedForCampaign:campaign];
+      if (!campaign.viewed && [campaign.network isEqual:network] && (inCache || campaign.allowStreaming)) {
         [retAr addObject:campaign];
       }
     }

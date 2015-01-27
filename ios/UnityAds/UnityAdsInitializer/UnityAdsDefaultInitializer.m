@@ -27,7 +27,7 @@
   [[UnityAdsMainViewController sharedInstance] applyViewStateHandler:[[UnityAdsViewStateEndScreen alloc] init]];
   
   [UnityAdsWebAppController sharedInstance];
-  [[UnityAdsWebAppController sharedInstance] setDelegate:self];
+  [(UnityAdsWebAppController *)[UnityAdsWebAppController sharedInstance] setDelegate:self];
   
   [self performSelector:@selector(initCampaignManager) onThread:self.backgroundThread withObject:nil waitUntilDone:NO];
   [self performSelector:@selector(initAnalyticsUploader) onThread:self.backgroundThread withObject:nil waitUntilDone:NO];
@@ -54,7 +54,7 @@
 - (void)initCampaignManager {
 	UAAssert(![NSThread isMainThread]);
 	UALOG_DEBUG(@"");
-  [[UnityAdsCampaignManager sharedInstance] setDelegate:self];
+  [(UnityAdsCampaignManager *)[UnityAdsCampaignManager sharedInstance] setDelegate:self];
   [super initCampaignManager];
 }
 

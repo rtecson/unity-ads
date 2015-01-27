@@ -37,6 +37,7 @@ NSString * const kUnityAdsWebViewDataParamNetworkKey = @"network";
 NSString * const kUnityAdsWebViewDataParamDeviceIdKey = @"deviceId";
 NSString * const kUnityAdsWebViewDataParamGameIdKey = @"gameId";
 NSString * const kUnityAdsWebViewDataParamDeviceTypeKey = @"deviceType";
+NSString * const kUnityAdsWebViewDataParamIdentifierForVendorKey = @"identifierForVendor";
 NSString * const kUnityAdsWebViewDataParamOpenUdidIdKey = @"openUdid";
 NSString * const kUnityAdsWebViewDataParamMacAddressKey = @"macAddress";
 NSString * const kUnityAdsWebViewDataParamSdkVersionKey = @"sdkVersion";
@@ -102,7 +103,8 @@ NSString * const kUnityAdsCampaignExpectedFileSize = @"trailerSize";
 NSString * const kUnityAdsCampaignAllowVideoSkipKey = @"allowSkipVideoInSeconds";
 NSString * const kUnityAdsRefreshCampaignsAfterViewed = @"refreshCampaignsAfterViewed";
 NSString * const kUnityAdsRefreshCampaignsAfterSeconds = @"refreshCampaignsAfterSeconds";
-
+NSString * const kUnityAdsCampaignURLSchemesKey = @"urlSchemes";
+NSString * const kUnityAdsCampaignAllowStreamingKey = @"allowStreaming";
 
 /* Reward Item JSON Properties */
 
@@ -124,6 +126,9 @@ NSString * const kUnityAdsUrlKey = @"impactUrl";
 NSString * const kUnityAdsWebViewUrlKey = @"webViewUrl";
 NSString * const kUnityAdsAnalyticsUrlKey = @"analyticsUrl";
 NSString * const kUnityAdsSdkVersionKey = @"nativeSdkVersion";
+NSString * const kUnityAdsAppFilteringKey = @"appFiltering";
+NSString * const kUnityAdsUrlSchemeMapKey = @"urlSchemeMap";
+NSString * const kUnityAdsInstalledAppsUrlKey = @"installedAppsUrl";
 
 
 /* Analytics Uploader */
@@ -145,6 +150,7 @@ NSString * const kUnityAdsAnalyticsQueryParamEventTypeKey = @"type";
 NSString * const kUnityAdsAnalyticsQueryParamTrackingIdKey = @"trackingId";
 NSString * const kUnityAdsAnalyticsQueryParamProviderIdKey = @"providerId";
 NSString * const kUnityAdsAnalyticsQueryParamZoneIdKey = @"zone";
+NSString * const kUnityAdsAnalyticsQueryParamCachedPlaybackKey = @"cachedPlayback";
 NSString * const kUnityAdsAnalyticsQueryParamRewardItemKey = @"rewardItem";
 NSString * const kUnityAdsAnalyticsQueryParamGamerSIDKey = @"sid";
 
@@ -180,6 +186,8 @@ NSString * const kUnityAdsInitQueryParamOdin1IdKey = @"odin1Id";
 NSString * const kUnityAdsInitQueryParamMacAddressKey = @"macAddress";
 NSString * const kUnityAdsInitQueryParamRawAdvertisingTrackingIdKey = @"rawAdvertisingTrackingId";
 NSString * const kUnityAdsInitQueryParamAdvertisingTrackingIdKey = @"advertisingTrackingId";
+NSString * const kUnityAdsInitQueryParamIdentifierForVendor = @"identifierForVendor";
+NSString * const kUnityAdsInitQueryParamNetworkTypeKey = @"iosNetworkType";
 NSString * const kUnityAdsInitQueryParamTrackingEnabledKey = @"trackingEnabled";
 NSString * const kUnityAdsInitQueryParamSoftwareVersionKey = @"softwareVersion";
 NSString * const kUnityAdsInitQueryParamHardwareVersionKey = @"hardwareVersion";
@@ -187,6 +195,9 @@ NSString * const kUnityAdsInitQueryParamSdkVersionKey = @"sdkVersion";
 NSString * const kUnityAdsInitQueryParamConnectionTypeKey = @"connectionType";
 NSString * const kUnityAdsInitQueryParamTestKey = @"test";
 NSString * const kUnityAdsInitQueryParamEncryptionKey = @"encrypted";
+NSString * const kUnityAdsInitQueryParamSendInternalDetailsKey = @"sendInternalDetails";
+NSString * const kUnityAdsInitQueryParamAppFilterListKey = @"appFilterList";
+NSString * const kUnityAdsInitQueryParamCachingSpeedKey = @"cachingSpeed";
 
 
 /* Google Analytics Instrumentation */
