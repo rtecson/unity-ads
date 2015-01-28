@@ -77,7 +77,7 @@ public class UnityAdsUnityWrapper implements IUnityAdsListener {
 	}
 
 	public boolean show (final String zoneId, final String rewardItemKey, final String optionsString) {
-		if (UnityAds.canShowAds(UnityAdsProperties.CURRENT_NETWORK) && UnityAds.canShow()) {
+		if (UnityAds.canShowNetwork(UnityAdsProperties.CURRENT_NETWORK)) {
 			HashMap<String, Object> options = null;
 			
 			if(optionsString.length() > 0) {
@@ -103,15 +103,11 @@ public class UnityAdsUnityWrapper implements IUnityAdsListener {
 	public void hide () {
 		UnityAds.hide();
 	}
-	
-	public boolean canShowAds (String network) {
-		return UnityAds.canShowAds(network);
+
+	public boolean canShowAds(String network) {
+		return UnityAds.canShowNetwork(network);
 	}
-	
-	public boolean canShow () {
-		return UnityAds.canShow();
-	}
-	
+
 	public static void setNetworks(String networks) {
 		UnityAds.setNetworks(networks);
 	}

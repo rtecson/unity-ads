@@ -226,7 +226,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 	}
 	
 	public static boolean show (Map<String, Object> options) {
-		if (canShow()) {
+		if (canShowNetwork(UnityAdsProperties.CURRENT_NETWORK)) {
 			UnityAdsZone currentZone = UnityAdsWebData.getZoneManager().getCurrentZone();
 			
 			if (currentZone != null) {
@@ -269,13 +269,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 		return show(null);
 	}
 
-	public static boolean canShowAds (String network) {
-			return webdata != null && 
-			webdata.getViewableVideoPlanCampaigns(network) != null && 
-			webdata.getViewableVideoPlanCampaigns(network).size() > 0;
-	}
-		
-	public static boolean canShow () {
+	public static boolean canShowNetwork(String network) {
 		if(_showingAds || webdata == null) return false;
 
 		Activity currentActivity = UnityAdsProperties.getCurrentActivity();
@@ -290,7 +284,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 			}
 		}
 
-		ArrayList<UnityAdsCampaign> viewableCampaigns = webdata.getViewableVideoPlanCampaigns(UnityAdsProperties.CURRENT_NETWORK);
+		ArrayList<UnityAdsCampaign> viewableCampaigns = webdata.getViewableVideoPlanCampaigns(network);
 
 		if(viewableCampaigns == null) return false;
 
@@ -351,7 +345,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 	}
 	
 	public static boolean setRewardItemKey (String rewardItemKey) {
-		if (canShow()) {
+		if (canShowNetwork(UnityAdsProperties.CURRENT_NETWORK)) {
 			UnityAdsZone zone = UnityAdsWebData.getZoneManager().getCurrentZone();
 			if(zone != null && zone.isIncentivized()) {
 				UnityAdsRewardItemManager itemManager = ((UnityAdsIncentivizedZone)zone).itemManager();
@@ -362,7 +356,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 	}
 	
 	public static void setDefaultRewardItemAsRewardItem () {
-		if (canShow()) {
+		if (canShowNetwork(UnityAdsProperties.CURRENT_NETWORK)) {
 			UnityAdsZone zone = UnityAdsWebData.getZoneManager().getCurrentZone();
 			if(zone != null && zone.isIncentivized()) {
 				UnityAdsRewardItemManager itemManager = ((UnityAdsIncentivizedZone)zone).itemManager();
@@ -437,7 +431,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 		UnityAdsCampaign campaign = campaignHandler.getCampaign();
 		UnityAdsDeviceLog.debug(campaign.toString());
 
-		if (canShowAds(campaign.getNetwork()))
+		if (canShowNetwork(campaign.getNetwork()))
 			sendReadyEvent(campaign.getNetwork());
 	}
 
@@ -565,7 +559,7 @@ public class UnityAds implements IUnityAdsCacheListener,
 		UnityAdsDeviceLog.entered();
 		Boolean dataOk = true;
 		
-		if (canShow()) {
+		if (canShowNetwork(UnityAdsProperties.CURRENT_NETWORK)) {
 			JSONObject setViewData = new JSONObject();
 			
 			try {				
