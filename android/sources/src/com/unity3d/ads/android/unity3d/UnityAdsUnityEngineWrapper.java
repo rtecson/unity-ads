@@ -15,6 +15,7 @@ import com.unity3d.ads.android.data.UnityAdsDevice;
 import com.unity3d.ads.android.properties.UnityAdsProperties;
 
 import java.util.HashMap;
+import java.lang.reflect.Field;
 
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class UnityAdsUnityEngineWrapper implements IUnityAdsListener {
@@ -24,6 +25,14 @@ public class UnityAdsUnityEngineWrapper implements IUnityAdsListener {
   private static Boolean _initialized = false;
 
   public UnityAdsUnityEngineWrapper () {
+    try {
+      Class unityPlayer = Class.forName("com.unity3d.player.UnityPlayer");
+      Field currentActivityField = unityPlayer.getField("currentActivity");
+      Activity currentActivity = (Activity)currentActivityField.get(null);
+      if(currentActivity != null) {
+        _startupActivity = currentActivity;
+      }
+    } catch(Exception e) {}
   }
 
   // Public methods
@@ -199,6 +208,9 @@ public class UnityAdsUnityEngineWrapper implements IUnityAdsListener {
   private static native void UnityAdsOnVideoCompleted(String rewardItemKey, int skipped);
   @Override
   public void onVideoCompleted(String rewardItemKey, boolean skipped) {
+    if(rewardItemKey == null || rewardItemKey.isEmpty()) {
+      rewardItemKey = "null";
+    }
     UnityAdsOnVideoCompleted(rewardItemKey, skipped ? 1 : 0);
   }
 
