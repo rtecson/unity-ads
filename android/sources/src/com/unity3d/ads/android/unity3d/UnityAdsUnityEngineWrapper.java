@@ -99,7 +99,7 @@ public class UnityAdsUnityEngineWrapper implements IUnityAdsListener {
     return UnityAds.canShowNetwork(UnityAdsProperties.CURRENT_NETWORK);
   }
 
-  public static void setNetworks(String networks) {
+  public void setNetworks(String networks) {
     UnityAds.setNetworks(networks);
   }
 
@@ -257,20 +257,20 @@ public class UnityAdsUnityEngineWrapper implements IUnityAdsListener {
     return null;
   }
 
-  public double getScreenSize() {
-    if (_startupActivity== null) return -1;
+  public String getScreenSize() {
+    if (_startupActivity== null) return String.valueOf(-1);
     DisplayMetrics metrics = new DisplayMetrics();
     _startupActivity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
     double x = metrics.widthPixels / metrics.xdpi;
     double y = metrics.heightPixels / metrics.ydpi;
-    return Math.sqrt(x * x + y * y);
+    return String.valueOf(Math.sqrt(x * x + y * y));
   }
 
-  public int getScreenDpi() {
-    if (_startupActivity == null) return -1;
+  public String getScreenDpi() {
+    if (_startupActivity == null) return String.valueOf(-1);
     DisplayMetrics metrics = new DisplayMetrics();
     _startupActivity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-    return metrics.densityDpi;
+    return String.valueOf(metrics.densityDpi);
   }
 
 }
