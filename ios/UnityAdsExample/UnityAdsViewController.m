@@ -69,43 +69,46 @@
   // TEST MODE: Do not use in production apps
 #if !TEST_LEGACY_IMPACT_API
   [[UnityAds sharedInstance] setDebugMode:YES];
-  [[UnityAds sharedInstance] setTestMode:NO];
+  [[UnityAds sharedInstance] setTestMode:YES];
+//    [[UnityAds sharedInstance] setTestMode:NO];
 #else
   [[ApplifierImpact sharedInstance] setDebugMode:YES];
   [[ApplifierImpact sharedInstance] setTestMode:NO];
 #endif
 
-  if (self.developerId.text != nil) {
-    NSLog(@"Setting developerId");
-    // TEST STUFF, DO NOT USE IN PRODUCTION APPS
-#if !TEST_LEGACY_IMPACT_API
-    if( [self.developerId.text length] > 0){
-        [[UnityAds sharedInstance] setTestMode:YES];
-    }
-    [[UnityAds sharedInstance] setTestDeveloperId:self.developerId.text];
-#else
-    if([self.developerId.text length] > 0){
-      [[ApplifierImpact sharedInstance] setTestMode:YES];
-    }
-    [[ApplifierImpact sharedInstance] setTestDeveloperId:self.developerId.text];
-#endif
-  }
-
-  if (self.optionsId.text != nil) {
-    NSLog(@"Setting optionsId");
-    // TEST STUFF, DO NOT USE IN PRODUCTION APPS
-#if !TEST_LEGACY_IMPACT_API
-    [[UnityAds sharedInstance] setTestOptionsId:self.optionsId.text];
-#else
-    [[ApplifierImpact sharedInstance] setTestOptionsId:self.optionsId.text];
-#endif
-  }
+//  if (self.developerId.text != nil) {
+//    NSLog(@"Setting developerId");
+//    // TEST STUFF, DO NOT USE IN PRODUCTION APPS
+//#if !TEST_LEGACY_IMPACT_API
+//    if( [self.developerId.text length] > 0){
+//        [[UnityAds sharedInstance] setTestMode:YES];
+//    }
+//    [[UnityAds sharedInstance] setTestDeveloperId:self.developerId.text];
+//#else
+//    if([self.developerId.text length] > 0){
+//      [[ApplifierImpact sharedInstance] setTestMode:YES];
+//    }
+//    [[ApplifierImpact sharedInstance] setTestDeveloperId:self.developerId.text];
+//#endif
+//  }
+//
+//  if (self.optionsId.text != nil) {
+//    NSLog(@"Setting optionsId");
+//    // TEST STUFF, DO NOT USE IN PRODUCTION APPS
+//#if !TEST_LEGACY_IMPACT_API
+//    [[UnityAds sharedInstance] setTestOptionsId:self.optionsId.text];
+//#else
+//    [[ApplifierImpact sharedInstance] setTestOptionsId:self.optionsId.text];
+//#endif
+//  }
 
   // Initialize Unity Ads
 #if !TEST_LEGACY_IMPACT_API
-	[[UnityAds sharedInstance] startWithGameId:@"16" andViewController:self];
+//	[[UnityAds sharedInstance] startWithGameId:@"16" andViewController:self];
+    BOOL result = [[UnityAds sharedInstance] startWithGameId:@"131627426" andViewController:self];
+    NSLog(@"result = %d", result);
 #else
-	[[ApplifierImpact sharedInstance] startWithGameId:@"16" andViewController:self];
+//	[[ApplifierImpact sharedInstance] startWithGameId:@"16" andViewController:self];
 #endif
 }
 

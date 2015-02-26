@@ -755,7 +755,7 @@
 			name = UnityAdsTests;
 			productName = UnityAdsTests;
 			productReference = 99FE3C1017E87E1300845E0B /* UnityAdsTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 		CC158909150789ED00B3D188 /* UnityAds */ = {
 			isa = PBXNativeTarget;
@@ -1188,7 +1188,7 @@
 		99FE3C3B17E896F100845E0B /* Test */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_$(XCODE_VERSION_MAJOR))";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ARCHS_0400 = "$(ARCHS_STANDARD_32_BIT)";
 				ARCHS_0500 = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				ARCHS_0600 = "$(ARCHS_STANDARD)";
@@ -1213,7 +1213,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = "$(TARGET_$(CURRENT_ARCH))";
 				LINK_WITH_STANDARD_LIBRARIES = NO;
 				MACH_O_TYPE = mh_object;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGET_arm64 = 7.0;
@@ -1229,7 +1229,7 @@
 		99FE3C3C17E896F100845E0B /* Test */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_$(XCODE_VERSION_MAJOR))";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ARCHS_0400 = "$(ARCHS_STANDARD_32_BIT)";
 				ARCHS_0500 = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				ARCHS_0600 = "$(ARCHS_STANDARD)";
@@ -1395,7 +1395,7 @@
 		CC158916150789ED00B3D188 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_$(XCODE_VERSION_MAJOR))";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ARCHS_0400 = "$(ARCHS_STANDARD_32_BIT)";
 				ARCHS_0500 = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				ARCHS_0600 = "$(ARCHS_STANDARD)";
@@ -1413,7 +1413,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = "$(TARGET_$(CURRENT_ARCH))";
 				LINK_WITH_STANDARD_LIBRARIES = NO;
 				MACH_O_TYPE = mh_object;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGET_arm64 = 7.0;
@@ -1429,7 +1429,7 @@
 		CC158917150789ED00B3D188 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_$(XCODE_VERSION_MAJOR))";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ARCHS_0400 = "$(ARCHS_STANDARD_32_BIT)";
 				ARCHS_0500 = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				ARCHS_0600 = "$(ARCHS_STANDARD)";
@@ -1447,6 +1447,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = "$(TARGET_$(CURRENT_ARCH))";
 				LINK_WITH_STANDARD_LIBRARIES = NO;
 				MACH_O_TYPE = mh_object;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGET_arm64 = 7.0;
@@ -1462,7 +1463,7 @@
 		CCF83B911733A13200DA12C1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_$(XCODE_VERSION_MAJOR))";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ARCHS_0400 = "$(ARCHS_STANDARD_32_BIT)";
 				ARCHS_0500 = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				ARCHS_0600 = "$(ARCHS_STANDARD)";
@@ -1500,7 +1501,7 @@
 		CCF83B921733A13200DA12C1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_$(XCODE_VERSION_MAJOR))";
+				ARCHS = "$(ARCHS_STANDARD)";
 				ARCHS_0400 = "$(ARCHS_STANDARD_32_BIT)";
 				ARCHS_0500 = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				ARCHS_0600 = "$(ARCHS_STANDARD)";

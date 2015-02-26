@@ -143,11 +143,12 @@ int main(int argc, char *argv[]);
 + (NSString *)advertisingIdentifier {
   NSString *identifier = nil;
 
-  Class advertisingManagerClass = NSClassFromString(@"ASIdentifierManager");
-
-  if (advertisingManagerClass != nil) {
-    identifier = [[[advertisingManagerClass sharedManager] advertisingIdentifier] UUIDString];
-  }
+  identifier = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+//  Class advertisingManagerClass = NSClassFromString(@"ASIdentifierManager");
+//
+//  if (advertisingManagerClass != nil) {
+//    identifier = [[[advertisingManagerClass sharedManager] advertisingIdentifier] UUIDString];
+//  }
 
   return identifier;
 }
